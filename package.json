@@ -1,29 +1,22 @@
 {
-    "name": "post",
+    "name": "post-public",
     "version": "0.1.0",
     "description": "Post public de message",
     "main": "index.js",
     "homepage": "https://mendoc.github.io/post",
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "deploy": "react-scripts build && gh-pages -d build"
+        "serve": "netlify-lambda serve funcs -c webpack.functions.js",
+        "build": "netlify-lambda build funcs -c webpack.functions.js"
     },
     "keywords": [
         "react"
     ],
     "author": "Dimitri ONGOUA",
     "license": "MIT",
-    "dependencies": {
-        "bootstrap": "4.6.0",
-        "react": "^17.0.1",
-        "react-dom": "^17.0.1",
-        "react-icons": "^4.2.0",
-        "react-router-dom": "^5.2.0",
-        "react-scripts": "^4.0.3"
-    },
     "devDependencies": {
-        "gh-pages": "^3.1.0"
+        "dotenv": "^8.2.0",
+        "netlify-lambda": "^2.0.1",
+        "webpack-node-externals": "^2.5.1"
     },
     "browserslist": {
         "production": [
@@ -36,5 +29,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "dependencies": {
+        "mongodb": "^3.6.5"
     }
 }
