@@ -34,7 +34,23 @@ const addPost = async (content) => {
 
     const res = await collection.insert({
         content: content,
-        postDate: new Date().toLocaleString()
+        postDate: Date.now()
+    });
+
+    // await client.close();
+
+    return res;
+};
+
+const deletePost = async (id) => {
+
+    await client.connect();
+
+    const db = client.db('post-public');
+    const collection = db.collection('posts');
+
+    const res = await collection.deleteOne({
+        _id: id,
     });
 
     // await client.close();
@@ -54,6 +70,11 @@ exports.handler = async (event, context) => {
             const params = JSON.parse(event.body);
             const content = params.content || "empty";
             res = await addPost(content);
+            break;
+        case 'DELETE':
+            const params = JSON.parse(event.body);
+            const id = params.id || 0;
+            res = await deletePost(id);
             break;
     }
 
