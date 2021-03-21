@@ -1,6 +1,7 @@
 require('dotenv').config();
 
 const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectID;
 
 const uri = process.env.MONGO_URI;
 
@@ -49,8 +50,8 @@ const deletePost = async (id) => {
     const db = client.db('post-public');
     const collection = db.collection('posts');
 
-    const res = await collection.deleteOne({
-        _id: id,
+    const res = await collection.findOneAndDelete({
+        _id: ObjectId(id),
     });
 
     // await client.close();
@@ -61,7 +62,7 @@ const deletePost = async (id) => {
 exports.handler = async (event, context) => {
 
     let res = {};
-    const params = {};
+    let params = {};
 
     switch (event.httpMethod) {
         case 'GET':
@@ -69,13 +70,13 @@ exports.handler = async (event, context) => {
             break;
         case 'POST':
             params = JSON.parse(event.body);
-            const content = params.content || "empty";
-            res = await addPost(content);
-            break;
-        case 'DELETE':
-            params = JSON.parse(event.body);
-            const id = params.id || 0;
-            res = await deletePost(id);
+            if (params.mode && params.mode === "delete") {
+                const id = params.id || 0;
+                res = await deletePost(id);
+            } else {
+                const content = params.content || "empty";
+                res = await addPost(content);
+            }
             break;
     }
 
@@ -83,7 +84,10 @@ exports.handler = async (event, context) => {
 
     return {
         statusCode: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*"
+        },
         body: JSON.stringify(res)
     }
 }
